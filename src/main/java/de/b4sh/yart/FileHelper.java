@@ -9,12 +9,16 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Comparator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 /**
  * FileHelper collects all file operation functions that may help templating all relevant components.
  */
 public class FileHelper {
+
+    private final static Logger log = Logger.getLogger(FileHelper.class.getName());
 
     /**
      * The function copyDirectory walks over all files and subdirectories starting from given sourceLocation
@@ -23,6 +27,7 @@ public class FileHelper {
      * @throws IOException thrown when IO operation fails
      */
     public static void copyDirectory(File sourceLocation , File targetLocation) throws IOException {
+        log.log(Level.INFO, String.format("Copying files from %s to %s",sourceLocation.getPath(), targetLocation.getPath()));
         if (sourceLocation.isDirectory()) {
             if (!targetLocation.exists()) {
                 targetLocation.mkdir();
@@ -44,14 +49,15 @@ public class FileHelper {
             in.close();
             out.close();
         }
+        log.log(Level.INFO, "Done copying files.");
     }
 
     /**
      * Deletes folder with content in reverse order.
      * @param element path to start deleting in
      */
-    public static void deleteFolderWithContent(Path element){
-        try(Stream<Path> pathStream = Files.walk(element)) {
+    public static void deleteFolderWithContent(Path element) {
+        try (Stream<Path> pathStream = Files.walk(element)) {
             pathStream.sorted(Comparator.reverseOrder()).forEach(path -> {
                 try {
                     Files.delete(path);
