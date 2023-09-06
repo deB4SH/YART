@@ -1,0 +1,53 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>de.b4sh</groupId>
+  <artifactId>yart</artifactId>
+  <version>0.0.0-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.source>20</maven.compiler.source>
+    <maven.compiler.target>20</maven.compiler.target>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>info.picocli</groupId>
+      <artifactId>picocli</artifactId>
+      <version>4.7.4</version> <!-- https://mvnrepository.com/artifact/info.picocli/picocli -->
+    </dependency>
+    <dependency>
+      <groupId>com.hubspot.jinjava</groupId>
+      <artifactId>jinjava</artifactId>
+      <version>2.7.1</version> <!-- https://mvnrepository.com/artifact/com.hubspot.jinjava/jinjava -->
+    </dependency>
+    <!-- read yaml into memory -->
+    <dependency>
+      <groupId>org.yaml</groupId>
+      <artifactId>snakeyaml</artifactId>
+      <version>2.1</version> <!-- https://mvnrepository.com/artifact/org.yaml/snakeyaml -->
+    </dependency>
+    <!-- validator -->
+    <dependency>
+      <groupId>org.leadpony.justify</groupId>
+      <artifactId>justify</artifactId>
+      <version>3.1.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.leadpony.joy</groupId>
+      <artifactId>joy-yaml</artifactId>
+      <version>2.1.0</version>
+      <scope>runtime</scope>
+    </dependency>
+    <!-- test dep -->
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <version>RELEASE</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+</project>
