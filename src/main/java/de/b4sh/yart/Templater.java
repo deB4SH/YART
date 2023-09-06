@@ -126,7 +126,6 @@ public class Templater implements Callable<Integer> {
                         log.log(Level.INFO, String.format("Found dir to template. Creating dir: %s%s",ref.configurationPathWithoutKey,map.get(ref.templateKey)));
                         FileHelper.copyDirectory(new File(ref.configurationPath),new File(ref.configurationPathWithoutKey+map.get(ref.templateKey)));
                         templateDirectory(map,new File(ref.configurationPathWithoutKey+map.get(ref.templateKey)));
-                        int a = 0;
                     } catch (IOException ex) {
                         throw new RuntimeException(ex);
                     }
