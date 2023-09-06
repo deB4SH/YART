@@ -9,6 +9,7 @@ import picocli.CommandLine;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -165,7 +166,10 @@ public class Templater implements Callable<Integer> {
             if(value instanceof LinkedHashMap<?,?>){
                 //recursive call for generateJinJavaBindings
                 result.put((String)key, generateJinJavaBindings((LinkedHashMap) value));
-            }else {
+            } else if(value instanceof ArrayList<?>){
+                result.put((String)key, value); //arraylist directly
+            }
+            else {
                 result.put((String)key, value.toString());
             }
         });
