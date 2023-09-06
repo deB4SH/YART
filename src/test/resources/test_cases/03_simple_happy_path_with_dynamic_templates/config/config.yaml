@@ -1,0 +1,6 @@
+team: Blue
+test:
+  - name: test-1
+    color: blue
+  - name: test-2
+    color: yellow
