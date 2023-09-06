@@ -47,13 +47,13 @@ class TemplaterTest {
 
 
     @org.junit.jupiter.api.Test
-    void testCase01BrokenSchema() throws Exception {
+    void testCase01BrokenSchema() {
         testid = "01_broken_schema";
         this.templater.setTemplateDirectory(String.format("src/test/resources/test_cases/%s/template",testid));
         this.templater.setConfigFileArg(String.format("src/test/resources/test_cases/%s/config/config.yaml",testid));
         this.templater.setSchemaDirectory(String.format("src/test/resources/test_cases/%s/schema",testid));
         Assertions.assertThrows(JsonParsingException.class, () -> {
-            int result = this.templater.call();
+            this.templater.call();
         });
     }
 
