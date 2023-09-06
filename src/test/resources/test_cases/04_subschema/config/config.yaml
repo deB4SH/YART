@@ -1,0 +1,48 @@
+devopsPipeline:
+  reposityUrl: localhost:5001/awesomeRepository/awesome
+  poolName: Linux
+clusters:
+  - name: happy-path-cluster
+    supervisorNamespace: tanzu-svc
+    adUserVar: tanzu-ad-user
+    adUserPwVar: tanzu-ad-user-pw
+    controlPlane:
+      vmClass: best-effort-xmedium
+      storageClass: storage-policy
+      replicas: 3
+      tkrVersion: 1.2.3
+    nodePools:
+      - poolName: worker-nodepool-1
+        replicas: 3
+        vmClass: best-effort-medium
+        storageClass: storage-policy
+        tkrVersion: 1.2.3
+        volumes:
+          containerd: 16
+          kubelet: 16
+      - poolName: worker-nodepool-2
+        replicas: 3
+        vmClass: best-effort-medium
+        storageClass: storage-policy
+        tkrVersion: 1.2.3
+        volumes:
+          containerd: 16
+          kubelet: 16
+  - name: happier-path-cluster
+    supervisorNamespace: tanzu-svc
+    adUserVar: tanzu-ad-user
+    adUserPwVar: tanzu-ad-user-pw
+    controlPlane:
+      vmClass: best-effort-xmedium
+      storageClass: storage-policy
+      replicas: 3
+      tkrVersion: 1.2.3
+    nodePools:
+      - poolName: worker-nodepool-1
+        replicas: 3
+        vmClass: best-effort-medium
+        storageClass: storage-policy
+        tkrVersion: 1.2.3
+        volumes:
+          containerd: 16
+          kubelet: 16

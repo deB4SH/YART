@@ -1,0 +1,71 @@
+{
+  "$id": "https://b4sh.de/cluster.nodepool.schema.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Cluster Nodepool Schema",
+  "type": "object",
+  "properties": {
+    "poolName": {
+      "type": "string",
+      "description": "designated name of given nodepool for the cluster"
+    },
+    "replicas": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "vmClass": {
+      "type": "string"
+    },
+    "storageClass": {
+      "type": "string"
+    },
+    "tkrVersion": {
+      "type": "string"
+    },
+    "volumes": {
+      "type": "object",
+      "properties": {
+        "containerd":{
+          "type": "integer",
+          "description": "Size of containerd volume in Gi"
+        },
+        "kubelet": {
+          "type": "integer",
+          "description": "Size of kubelet volume in Gi"
+        }
+      },
+      "required": ["containerd","kubelet"]
+    },
+    "taints": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "effect":{
+            "type": "string"
+          },
+          "key": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "labels": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "required": ["poolName","replicas","vmClass","storageClass","tkrVersion","volumes"]
+}

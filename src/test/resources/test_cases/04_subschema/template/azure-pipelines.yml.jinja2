@@ -1,0 +1,31 @@
+trigger:
+  batch: true
+  branches:
+    include:
+      - main
+      - master
+
+variables:
+  - group: {{ global.devopsPipeline.variableGroupName }}
+
+pool:
+  name: {{ global.devopsPipeline.poolName }}
+
+jobs:
+  - job: deploy_kubernetes_cluster
+    workspace:
+      clean: all
+    steps:
+      - checkout: self
+      - template: azure-pipelines/template-manifests.yaml
+      - template: azure-pipelines/apply-cluster.yaml
+        parameters:
+          clusters:
+          {%- for cluster in clusters %}
+            - name: {{ cluster.name }}
+              path: cluster/{{ cluster.name }}
+              namespace: {{ cluster.supervisorNamespace }}
+              tanzuSupervisorServer: $(tanzu-supervisor-server)
+              tanzuAdUser: $({{ cluster.tanzuAdUserVar }})
+              tanzuAdUserPw: $({{ cluster.tanzuAdUserPwVar }})
+          {%- endfor %}

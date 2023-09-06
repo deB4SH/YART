@@ -1,0 +1,35 @@
+trigger:
+  batch: true
+  branches:
+    include:
+      - main
+      - master
+
+variables:
+  - group: 
+
+pool:
+  name: 
+
+jobs:
+  - job: deploy_kubernetes_cluster
+    workspace:
+      clean: all
+    steps:
+      - checkout: self
+      - template: azure-pipelines/template-manifests.yaml
+      - template: azure-pipelines/apply-cluster.yaml
+        parameters:
+          clusters:
+            - name: happy-path-cluster
+              path: cluster/happy-path-cluster
+              namespace: tanzu-svc
+              tanzuSupervisorServer: $(tanzu-supervisor-server)
+              tanzuAdUser: $()
+              tanzuAdUserPw: $()
+            - name: happier-path-cluster
+              path: cluster/happier-path-cluster
+              namespace: tanzu-svc
+              tanzuSupervisorServer: $(tanzu-supervisor-server)
+              tanzuAdUser: $()
+              tanzuAdUserPw: $()

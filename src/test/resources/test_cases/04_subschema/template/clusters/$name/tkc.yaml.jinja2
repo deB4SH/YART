@@ -1,0 +1,46 @@
+apiVersion: run.tanzu.vmware.com/v1alpha3
+kind: TanzuKubernetesCluster
+metadata:
+  name: {{ name }}
+  annotations:
+    run.tanzu.vmware.com/resolve-os-image: os-name=ubuntu
+spec:
+  topology:
+    controlPlane:
+      replicas: {{ controlPlane.replicas }}
+      vmClass: {{ controlPlane.vmClass }}
+      storageClass: {{ controlPlane.storageClass }}
+      tkr:
+        reference:
+          name: {{ controlPlane.tkrVersion }}
+    nodePools:
+      {% for pool in nodePools -%}
+      - name: {{ pool.poolName }}
+        replicas: {{ pool.replicas }}
+        vmClass: {{ pool.vmClass }}
+        storageClass: {{ pool.storageClass }}
+        {%- if pool.taints %}
+        taints:
+          - effect: {{ nodepool.taints.effect}}
+            key: {{ nodepool.taints.key }}
+            value: {{ nodepool.taints.value }}
+        {%- endif %}
+        {%- if pool.labels %}
+        labels:
+          {{ nodepool.labels.key}} : {{ nodepool.labels.value}}
+        {%- endif %}
+        {%- if pool.volumes %}
+        volumes:
+          - name: containerd
+            mountPath: /var/lib/containerd
+            capacity:
+              storage: {{ pool.volumes.containerd }}Gi
+          - name: kubelet
+            mountPath: /var/lib/kubelet
+            capacity:
+              storage: {{ pool.volumes.kubelet }}Gi
+        {% endif -%}
+        tkr:
+          reference:
+            name: {{ pool.tkrVersion }}
+      {% endfor %}

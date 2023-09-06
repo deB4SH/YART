@@ -1,0 +1,33 @@
+apiVersion: run.tanzu.vmware.com/v1alpha3
+kind: TanzuKubernetesCluster
+metadata:
+  name: happier-path-cluster
+  annotations:
+    run.tanzu.vmware.com/resolve-os-image: os-name=ubuntu
+spec:
+  topology:
+    controlPlane:
+      replicas: 3
+      vmClass: best-effort-xmedium
+      storageClass: storage-policy
+      tkr:
+        reference:
+          name: 1.2.3
+    nodePools:
+      - name: worker-nodepool-1
+        replicas: 3
+        vmClass: best-effort-medium
+        storageClass: storage-policy
+        volumes:
+          - name: containerd
+            mountPath: /var/lib/containerd
+            capacity:
+              storage: 16Gi
+          - name: kubelet
+            mountPath: /var/lib/kubelet
+            capacity:
+              storage: 16Gi
+        tkr:
+          reference:
+            name: 1.2.3
+      

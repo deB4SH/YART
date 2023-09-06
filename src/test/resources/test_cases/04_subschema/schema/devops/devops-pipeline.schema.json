@@ -1,0 +1,18 @@
+{
+  "$id": "https://b4sh.de/devops-pipeline.schema.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Devops Pipeline Schema",
+  "type": "object",
+  "properties": {
+    "repositoryUrl": {
+      "type": "string",
+      "description": "Repository URL under which the clusters should reside."
+    },
+    "poolName": {
+      "type": "string",
+      "description": "Azure Pipeline Pool to use for pipelines",
+      "default": "Worker-Pool"
+    }
+  },
+  "required": ["repositoryUrl","poolName"]
+}
