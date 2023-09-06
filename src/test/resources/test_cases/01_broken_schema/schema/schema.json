@@ -1,0 +1,19 @@
+{
+  "$id": "https://example.com/point.schema.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "cluster",
+  "clusters": {
+    "type": "array",
+    "items": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        }
+        "bla": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}
