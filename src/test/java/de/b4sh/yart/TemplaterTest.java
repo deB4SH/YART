@@ -3,7 +3,16 @@ package de.b4sh.yart;
 
 import jakarta.json.stream.JsonParsingException;
 import org.junit.jupiter.api.Assertions;
+import org.opentest4j.AssertionFailedError;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Arrays;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -13,12 +22,8 @@ class TemplaterTest {
     private static final Logger log = Logger.getLogger(TemplaterTest.class.getName());
     private Templater templater;
 
-    private String testCaseBasePath = "src/test/resources/test_cases/";
-    private String configPath = "config/";
-    private String schemaPath = "schema/";
-    private String templatePath = "template/template.yaml.jinja2";
-
     private String testid = "00_template";
+    private String currentTestDir = "target/00";
 
     @org.junit.jupiter.api.BeforeEach
     void setUp() {
@@ -31,7 +36,8 @@ class TemplaterTest {
 
         UUID uuid = UUID.randomUUID();
         log.log(Level.INFO, String.format("Output Directory for current test: target/%s/", uuid));
-        this.templater.setOutputDirectory(String.format("target/%s/", uuid));
+        currentTestDir = String.format("target/%s",uuid);
+        this.templater.setOutputDirectory(currentTestDir);
     }
 
     @org.junit.jupiter.api.AfterEach
@@ -58,8 +64,12 @@ class TemplaterTest {
         this.templater.setConfigFileArg(String.format("src/test/resources/test_cases/%s/config/config.yaml",testid));
         this.templater.setSchemaDirectory(String.format("src/test/resources/test_cases/%s/schema",testid));
         int result = this.templater.call();
-        Assertions.assertEquals("0",result); //check if call function returned happy path result
-        //TODO: assert resulting files
+        Assertions.assertEquals(0,result); //check if call function returned happy path result
+        //verify if files are as expected
+        log.log(Level.INFO, "Verify that outputs are equal");
+        verifyDirsAreEqual(new File(String.format("src/test/resources/test_cases/%s/expected",testid)).toPath(),
+                new File(currentTestDir).toPath());
+
     }
 
     @org.junit.jupiter.api.Test
@@ -70,7 +80,31 @@ class TemplaterTest {
         this.templater.setSchemaDirectory(String.format("src/test/resources/test_cases/%s/schema",testid));
         int result = this.templater.call();
         Assertions.assertEquals(0,result); //check if call function returned happy path result
-        //TODO: assert resulting files
+        //verify if files are as expected
+        log.log(Level.INFO, "Verify that outputs are equal");
+        verifyDirsAreEqual(new File(String.format("src/test/resources/test_cases/%s/expected",testid)).toPath(),
+                new File(currentTestDir).toPath());
     }
 
+
+    void verifyDirsAreEqual(Path source, Path destination) throws IOException {
+        Files.walkFileTree(source,new SimpleFileVisitor<>(){
+            @Override
+            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                FileVisitResult result = super.visitFile(file,attrs);
+                // get the relative file name from path "one"
+                Path relativize = source.relativize(file);
+                // construct the path for the counterpart file in "other"
+                Path fileInOther = destination.resolve(relativize);
+                log.log(Level.INFO, String.format("[Verify]comparing: %s to %s", file, fileInOther));
+
+                byte[] otherBytes = Files.readAllBytes(fileInOther);
+                byte[] theseBytes = Files.readAllBytes(file);
+                if (!Arrays.equals(otherBytes, theseBytes)) {
+                    throw new AssertionFailedError(file + " is not equal to " + fileInOther);
+                }
+                return result;
+            }
+        });
+    }
 }
