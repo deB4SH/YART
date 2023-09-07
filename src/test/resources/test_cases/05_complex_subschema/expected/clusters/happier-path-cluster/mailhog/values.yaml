@@ -1,0 +1,8 @@
+ingress:
+  host: mailhog-awesomesauce.happier-path-cluster.corp.local
+  certificateIssuer: http
+  className: nginx
+
+mailhog:
+  image:
+    repository: pullproxy.corp.lan/hub.docker.com/mailhog/mailhog

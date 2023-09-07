@@ -1,0 +1,20 @@
+{
+  "$id": "https://b4sh.de/cluster.schema.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Cluster Schema",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "defaults": {
+      "type": "object",
+      "$ref": "clusterConfiguration/defaults.json"
+    },
+    "serviceCatalog": {
+      "type": "object",
+      "$ref": "clusterConfiguration/servicecatalog.json"
+    }
+  },
+  "required": ["name","defaults","serviceCatalog"]
+}

@@ -49,7 +49,7 @@ public class FileHelper {
             in.close();
             out.close();
         }
-        log.log(Level.INFO, "Done copying files.");
+        log.log(Level.FINE, "Done copying files.");
     }
 
     /**

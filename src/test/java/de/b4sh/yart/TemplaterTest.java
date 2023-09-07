@@ -100,9 +100,22 @@ class TemplaterTest {
                 new File(currentTestDir).toPath());
     }
 
+    @org.junit.jupiter.api.Test
+    void testCase05ComplexSubschema() throws Exception {
+        testid = "05_complex_subschema";
+        this.templater.setTemplateDirectory(String.format("src/test/resources/test_cases/%s/template",testid));
+        this.templater.setConfigFileArg(String.format("src/test/resources/test_cases/%s/config/config.yaml",testid));
+        this.templater.setSchemaDirectory(String.format("src/test/resources/test_cases/%s/schema",testid));
+        int result = this.templater.call();
+        Assertions.assertEquals(0,result); //check if call function returned happy path result
+        //verify if files are as expected
+        log.log(Level.INFO, "Verify that outputs are equal");
+        verifyDirsAreEqual(new File(String.format("src/test/resources/test_cases/%s/expected",testid)).toPath(),
+                new File(currentTestDir).toPath());
+    }
 
     void verifyDirsAreEqual(Path source, Path destination) throws IOException {
-        Files.walkFileTree(source,new SimpleFileVisitor<>(){
+        Files.walkFileTree(source, new SimpleFileVisitor<>(){
             @Override
             public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                 FileVisitResult result = super.visitFile(file,attrs);

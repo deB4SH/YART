@@ -1,0 +1,13 @@
+{
+  "$id": "https://b4sh.de/service-catalog-mailhog.schema.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Service Catalog External Mailhog Schema",
+  "type": "object",
+  "properties": {
+    "uri": {
+      "type": "string",
+      "description": "URI under which the ingress should respond to requests"
+    }
+  },
+  "required": ["uri"]
+}

@@ -21,9 +21,13 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
+import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @CommandLine.Command(name = "template",
         mixinStandardHelpOptions = true,
@@ -47,6 +51,8 @@ public class Templater implements Callable<Integer> {
     private String configFileArg;
 
     private final Logger log = Logger.getLogger(Templater.class.getName());
+    private final Pattern pathPattern = Pattern.compile(".+(?>\\$[a-z]+)$");
+
     private JsonValidationService service;
     private JsonSchemaReaderFactory readerFactory;
 
@@ -93,10 +99,16 @@ public class Templater implements Callable<Integer> {
             return ExitCode.TEMPLATE_DIR_VAR_NOT_FOLDER.getNumber();
         }
         //copy template dir to output dir
+        log.log(Level.INFO, "Initial Copy of all templates to target directory");
         FileHelper.copyDirectory(templateDir,outputDir);
+        log.log(Level.INFO, "Done with initial copy");
+        log.log(Level.INFO, "Next: searching and templating dynamic directories");
+        //create filter pattern for paths to reduce to first dynamic dir
+        Predicate<Path> reduceToDynamic = path -> pathPattern.matcher(path.toString()).find();
         //walk over output dir and check for template dirs to create
         List<Path> dirs = Files.walk(outputDir.toPath()).filter(Files::isDirectory).toList();
-        dirs.stream().filter(s -> s.toString().contains("$")).forEach(element -> {
+        dirs.stream().filter(s -> s.toString().contains("$")).filter(reduceToDynamic).forEach(element -> {
+            log.log(Level.INFO, String.format("Found dynamic directory to template: %s",element.toString()));
             String[] configurationPath = element.toString().replace(outputDirectory, "").split("/");
             var ref = new Object() { //requested to cast into anonymous object to work in a lambda later
                 String templateKey = "null";
@@ -124,8 +136,9 @@ public class Templater implements Callable<Integer> {
                     //copy dir
                     try {
                         log.log(Level.INFO, String.format("Found dir to template. Creating dir: %s%s",ref.configurationPathWithoutKey,map.get(ref.templateKey)));
+                        final File sourceDirectory = new File(ref.configurationPath);
                         final File targetDirectory = new File(ref.configurationPathWithoutKey+map.get(ref.templateKey));
-                        FileHelper.copyDirectory(new File(ref.configurationPath),targetDirectory);
+                        FileHelper.copyDirectory(sourceDirectory,targetDirectory);
                         templateDirectory(map,targetDirectory);
                     } catch (IOException ex) {
                         throw new RuntimeException(ex);
@@ -140,23 +153,23 @@ public class Templater implements Callable<Integer> {
         return 0;
     }
 
-    private void templateDirectory(final LinkedHashMap data, final File folder){
+    private void templateDirectory(final LinkedHashMap data, final File folder) {
         Jinjava jinjava = new Jinjava();
-        for (File file : folder.listFiles((dir, name) -> name.toLowerCase().endsWith(".jinja2"))) {
-            try {
+        try (Stream<Path> pathStream = Files.walk(folder.toPath(), Integer.MAX_VALUE)) {
+            for (File file : pathStream.map(Path::toFile).filter(elem -> elem.toString().endsWith(".jinja2")).toList()) {
                 String content = Files.lines(file.toPath()).collect(Collectors.joining("\n"));
                 Map<String, ?> jinJavaBindings = generateJinJavaBindings(data);
-                String result = jinjava.render(content,jinJavaBindings);
+                String result = jinjava.render(content, jinJavaBindings);
                 //remove jinja2 extension from filepath
-                String path = file.getPath().replace(".jinja2","");
-                Files.write(Path.of(path),result.getBytes(StandardCharsets.UTF_8));
+                String path = file.getPath().replace(".jinja2", "");
+                Files.write(Path.of(path), result.getBytes(StandardCharsets.UTF_8));
                 //delete old jinja2 template file
-                if(file.delete() == false){
-                    log.log(Level.WARNING, String.format("Could not delete jinja2 template file with path: %s",path));
+                if (!file.delete()) {
+                    log.log(Level.WARNING, String.format("Could not delete jinja2 template file with path: %s", path));
                 }
-            } catch (IOException e) {
-                throw new RuntimeException(e);
             }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 

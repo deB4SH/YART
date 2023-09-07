@@ -1,0 +1,17 @@
+{
+  "$id": "https://b4sh.de/cluster-defaults.schema.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Cluster Service Catalog Defaults Schema",
+  "type": "object",
+  "properties": {
+    "storageClass": {
+      "type": "string",
+      "description": "The storage class to use with every deployment."
+    },
+    "serviceUri": {
+      "type": "string",
+      "description": "Service URI under which every base-service should be made available"
+    }
+  },
+  "required": ["storageClass", "serviceUri"]
+}

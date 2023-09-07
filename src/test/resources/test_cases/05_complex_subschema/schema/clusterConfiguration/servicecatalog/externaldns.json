@@ -1,0 +1,29 @@
+{
+  "$id": "https://b4sh.de/seervice-catalog-external-dns.schema.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Service Catalog External DNS Schema",
+  "type": "object",
+  "properties": {
+    "powerdnsApiKey": {
+      "type": "string",
+      "description": "API Key to access powerdns-admin service"
+    },
+    "domainFilter": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "uri": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Domains on which the externaldns should listen"
+    },
+    "txtOwnerId": {
+      "type": "string",
+      "description": "DNS txtownerid to use for marking dns records within the powerdns"
+    }
+  },
+  "required": ["powerdnsApiKey","domainFilter"]
+}

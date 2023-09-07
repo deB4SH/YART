@@ -1,0 +1,8 @@
+ingress:
+  host: {{serviceCatalog.mailhog.uri}}.{{defaults.serviceUri}}
+  certificateIssuer: http
+  className: nginx
+
+mailhog:
+  image:
+    repository: pullproxy.corp.lan/hub.docker.com/mailhog/mailhog

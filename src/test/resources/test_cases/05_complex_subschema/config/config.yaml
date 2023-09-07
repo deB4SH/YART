@@ -1,0 +1,25 @@
+clusters:
+  - name: happy-path-cluster
+    defaults:
+      storageClass: "storageclass-happy-path-cluster"
+      serviceUri: "happy-path-cluster.corp.local"
+    serviceCatalog:
+      externalDns:
+        powerdnsApiKey: "myAwesomeKey"
+        domainFilter:
+          - uri: "*.subdomain.corp.local"
+          - uri: "*.sub.corp.local"
+      mailhog:
+        uri: "mailhog"
+  - name: happier-path-cluster
+    defaults:
+      storageClass: "storageclass-cluster"
+      serviceUri: "happier-path-cluster.corp.local"
+    serviceCatalog:
+      externalDns:
+        powerdnsApiKey: "myAwesomeKey"
+        domainFilter:
+          - uri: "*.subdomain.corp.local"
+          - uri: "*.sub.corp.local"
+      mailhog:
+        uri: "mailhog-awesomesauce"

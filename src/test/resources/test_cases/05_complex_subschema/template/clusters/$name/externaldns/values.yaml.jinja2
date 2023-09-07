@@ -1,0 +1,33 @@
+#Must be BASE64 encoded
+pdns_api_key: {{ serviceCatalog.externalDns.powerdnsApiKey | b64encode }}
+
+external-dns:
+  pdns:
+    apiUrl: "https://powerdns.corp.local"
+    apiPort: "443"
+    secretName: "external-dns"
+
+  image:
+    registry: pullproxy.corp.lan/hub.docker.com
+
+  provider: pdns
+
+  extraVolumeMounts:
+    - name: certs
+      mountPath: "/etc/ssl/certs/corp-ca.pem"
+      subPath: "corp-ca.pem"
+
+  extraVolumes:
+    - name: certs
+      configMap:
+        name: corp-ca
+
+  extraArgs:
+    pdns-tls-enabled: false
+    tls-ca: /etc/ssl/certs/corp-ca.pem
+
+  domainFilters:
+    {%- for filter in serviceCatalog.externalDns.domainFilter %}
+    - {{ filter.uri }}
+    {%- endfor %}
+  txtOwnerId: "{{ serviceCatalog.externalDns.txtOwnerID|default(name,true) }}"
