@@ -29,7 +29,9 @@ spec:
         {%- endif %}
         {%- if pool.labels %}
         labels:
-          {{ nodepool.labels.key}} : {{ nodepool.labels.value}}
+          {%- for label in pool.labels %}
+            {{ label.key}} : {{ label.value}}
+          {%- endfor %}
         {%- endif %}
         {%- if pool.volumes %}
         volumes:
