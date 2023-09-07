@@ -18,6 +18,13 @@ spec:
         replicas: 3
         vmClass: best-effort-medium
         storageClass: storage-policy
+        taints:
+          - effect: test
+            key: random
+            value: value
+          - effect: test2
+            key: random2
+            value: value2
         volumes:
           - name: containerd
             mountPath: /var/lib/containerd

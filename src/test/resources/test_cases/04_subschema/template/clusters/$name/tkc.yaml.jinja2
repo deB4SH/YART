@@ -21,9 +21,11 @@ spec:
         storageClass: {{ pool.storageClass }}
         {%- if pool.taints %}
         taints:
-          - effect: {{ nodepool.taints.effect}}
-            key: {{ nodepool.taints.key }}
-            value: {{ nodepool.taints.value }}
+          {%- for taint in pool.taints %}
+          - effect: {{ taint.effect}}
+            key: {{ taint.key }}
+            value: {{ taint.value }}
+          {%- endfor %}
         {%- endif %}
         {%- if pool.labels %}
         labels:
