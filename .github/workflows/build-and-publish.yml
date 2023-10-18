@@ -1,0 +1,60 @@
+name: Create package on push to master
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: 20
+          server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
+          settings-path: ${{ github.workspace }} # location for the settings.xml file
+      - if: github.event.release
+        name: Update version in pom.xml (Release only)
+        run: mvn -B versions:set -DnewVersion=${{ github.event.release.tag_name }} -DgenerateBackupPoms=false
+      - name: Build with Maven
+        run: mvn -B package --file pom.xml
+      - name: Publish to GitHub Packages Apache Maven
+        run: mvn deploy -s $GITHUB_WORKSPACE/settings.xml
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+      - name: Copy result jar to docker dir
+        run: cp target/yart-${{ github.event.release.tag_name }}-jar-with-dependencies.jar src/docker/yart.jar
+      - name: Login to GHCR
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Docker meta
+        id: meta_build
+        uses: docker/metadata-action@v4
+        with:
+          images: |
+            ghcr.io/deb4sh/yart
+          labels: |
+            org.opencontainers.image.title="YART"
+            org.opencontainers.image.description="Yet another random templater"
+            org.opencontainers.image.vendor="https://github.com/${{ github.repository_owner }}"
+            org.label-schema.url="https://github.com/${{ github.repository_owner }}/YART"
+            org.label-schema.usage="https://github.com/${{ github.repository_owner }}/YART/blob/main/README.md"
+            org.label-schema.schema-version="1.0"
+          tags: |
+            type=schedule
+            type=ref,event=tag
+      - name: Build and push
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          file: ./src/docker/Dockerfile
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta_build.outputs.tags }}
+          labels: ${{ steps.meta_build.outputs.labels }}
