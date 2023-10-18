@@ -17,7 +17,7 @@ jobs:
           server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
           settings-path: ${{ github.workspace }} # location for the settings.xml file
       - name: Update version in pom.xml (Release only)
-        run: mvn -B versions:set -DnewVersion=${{ github.event.inputs.tag }} -DgenerateBackupPoms=false
+        run: mvn -B versions:set -DnewVersion=${{ github.ref_name }} -DgenerateBackupPoms=false
       - name: Build with Maven
         run: mvn -B package --file pom.xml
       - name: Publish to GitHub Packages Apache Maven
@@ -25,7 +25,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
       - name: Copy result jar to docker dir
-        run: cp target/yart-${{ github.event.inputs.tag }}-jar-with-dependencies.jar src/docker/yart.jar
+        run: cp target/yart-${{ github.ref_name }}-jar-with-dependencies.jar src/docker/yart.jar
       - name: Login to GHCR
         if: github.event_name != 'pull_request'
         uses: docker/login-action@v2
