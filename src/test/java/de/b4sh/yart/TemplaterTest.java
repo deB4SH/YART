@@ -3,6 +3,7 @@ package de.b4sh.yart;
 
 import jakarta.json.stream.JsonParsingException;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.opentest4j.AssertionFailedError;
 
 import java.io.File;
@@ -17,6 +18,7 @@ import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+@ExtendWith(TemplateTestResultExecution.class)
 class TemplaterTest {
 
     private static final Logger log = Logger.getLogger(TemplaterTest.class.getName());
@@ -133,5 +135,9 @@ class TemplaterTest {
                 return result;
             }
         });
+    }
+
+    public String getCurrentTestDir() {
+        return currentTestDir;
     }
 }
