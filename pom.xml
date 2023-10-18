@@ -127,4 +127,30 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+
+  <licenses>
+    <license>
+      <name>MIT License</name>
+      <url>http://www.opensource.org/licenses/mit-license.php</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <developers>
+    <developer>
+      <email>gitmail@b4sh.de</email>
+      <name>deB4SH</name>
+      <url>https://b4sh.de</url>
+      <id>deB4SH</id>
+    </developer>
+  </developers>
+
+  <distributionManagement>
+    <repository>
+      <id>github</id>
+      <name>GitHub Maven Packages</name>
+      <url>https://maven.pkg.github.com/deb4sh/yart</url>
+    </repository>
+  </distributionManagement>
+
 </project>
