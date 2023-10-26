@@ -1,4 +1,9 @@
 FROM openjdk:21-slim-bookworm
+#announce environment variables
+ENV templatedirectory="/template"
+ENV schemadirectory="/schema"
+ENV schemafilename="schema.json"
+ENV configfile="/data/config.yaml"
 #add working user
 ARG user=appuser
 ARG group=appuser
@@ -13,4 +18,4 @@ RUN mkdir {template,schema,data,output}
 COPY yart.jar /tmp/yart.jar
 #default run configuration
 USER ${uid}:${gid}
-CMD java -jar /tmp/yart.jar --templatedirectory /template --schemadirectory /schema --schemafilename schema.json --configfile /data/config.yaml --outputdirectory /output
+CMD java -jar /tmp/yart.jar --templatedirectory ${templatedirectory} --schemadirectory ${schemadirectory} --schemafilename ${schemafilename} --configfile ${configfile} --outputdirectory /output
