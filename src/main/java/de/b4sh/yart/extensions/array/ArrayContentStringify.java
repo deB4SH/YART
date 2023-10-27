@@ -1,4 +1,4 @@
-package de.b4sh.yart.jinjaextensions;
+package de.b4sh.yart.extensions.array;
 
 import com.hubspot.jinjava.objects.collections.SizeLimitingPyList;
 
