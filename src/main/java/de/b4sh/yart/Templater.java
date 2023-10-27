@@ -1,6 +1,8 @@
 package de.b4sh.yart;
 
 import com.hubspot.jinjava.Jinjava;
+import com.hubspot.jinjava.lib.fn.ELFunctionDefinition;
+import de.b4sh.yart.jinjaextensions.ArrayContentStringify;
 import jakarta.json.stream.JsonParser;
 import org.leadpony.justify.api.*;
 import org.yaml.snakeyaml.Yaml;
@@ -9,7 +11,6 @@ import picocli.CommandLine;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -24,7 +25,6 @@ import java.util.concurrent.Callable;
 import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -155,6 +155,12 @@ public class Templater implements Callable<Integer> {
 
     private void templateDirectory(final LinkedHashMap data, final File folder) {
         Jinjava jinjava = new Jinjava();
+        jinjava.getGlobalContext().registerFunction(
+                new ELFunctionDefinition("ext",
+                    "stringifyArray",
+                    ArrayContentStringify.class,
+                    "stringifyArray",
+                    Object.class));
         try (Stream<Path> pathStream = Files.walk(folder.toPath(), Integer.MAX_VALUE)) {
             for (File file : pathStream.map(Path::toFile).filter(elem -> elem.toString().endsWith(".jinja2")).toList()) {
                 String content = Files.lines(file.toPath()).collect(Collectors.joining("\n"));
