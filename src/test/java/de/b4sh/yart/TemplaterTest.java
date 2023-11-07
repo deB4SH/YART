@@ -60,6 +60,21 @@ class TemplaterTest {
     }
 
     @org.junit.jupiter.api.Test
+    void testCase00HelloWorld() throws Exception {
+        testid = "00_hello_world";
+        this.templater.setTemplateDirectory(String.format("src/test/resources/test_cases/%s/template",testid));
+        this.templater.setConfigFileArg(String.format("src/test/resources/test_cases/%s/config/config.yaml",testid));
+        this.templater.setSchemaDirectory(String.format("src/test/resources/test_cases/%s/schema",testid));
+        int result = this.templater.call();
+        Assertions.assertEquals(0,result); //check if call function returned happy path result
+        //verify if files are as expected
+        log.log(Level.INFO, "Verify that outputs are equal");
+        verifyDirsAreEqual(new File(String.format("src/test/resources/test_cases/%s/expected",testid)).toPath(),
+                new File(currentTestDir).toPath());
+
+    }
+
+    @org.junit.jupiter.api.Test
     void testCase02SimpleHappyPath() throws Exception {
         testid = "02_simple_happy_path";
         this.templater.setTemplateDirectory(String.format("src/test/resources/test_cases/%s/template",testid));
