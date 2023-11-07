@@ -32,6 +32,8 @@ There are also multiple examples included within the test resources. For example
 
 # Nice To Know Features
 
+## Dynamic Templating
+
 YART supports dynamic templating. This means it is capable of copying a directory multiple times according to your configuration and templates the files within from this directory.
 This comes in handy if you are provisioning a service catalog for multiple clusters and need to copy the same values.yaml multiple times with only smaller changes to the configuration.
 
