@@ -40,8 +40,25 @@ The base [schema](https://github.com/deB4SH/YART/blob/main/src/test/resources/te
 It provides a [name](https://github.com/deB4SH/YART/blob/main/src/test/resources/test_cases/05_complex_subschema/schema/clusterConfiguration/configuration.schema.json#L7) which is reference within the templating phase.
 A similiar structure is build up within the template directory and a [special directory](https://github.com/deB4SH/YART/tree/main/src/test/resources/test_cases/05_complex_subschema/template/clusters) `name` is created starting with a `$` as marker.
 
+```
+clusters
+└── $name
+    ├── externaldns
+    └── mailhog
+```
+
 This specific directory get copied the amount of clusters you may have defined in your [config.yaml](https://github.com/deB4SH/YART/blob/main/src/test/resources/test_cases/05_complex_subschema/config/config.yaml).
 The resulting should look like the [expected output](https://github.com/deB4SH/YART/tree/main/src/test/resources/test_cases/05_complex_subschema/expected/clusters) found inside the test ressources.
+
+```
+clusters
+├── happier-path-cluster
+│   ├── externaldns
+│   └── mailhog
+└── happy-path-cluster
+    ├── externaldns
+    └── mailhog
+```
 
 ---
 
