@@ -30,14 +30,14 @@ class DictionaryObjectParserTest {
         SizeLimitingPyMap map = new SizeLimitingPyMap(generateTestMap(),10);
         String result =  DictionaryObjectParser.transform(map);
 
-        String multiLineAssertionVal = "\"veng_developer\" = {\n" +
+        String multiLineAssertionVal = "{\"veng_developer\" = {\n" +
                 "    \"principal_object_id\" = \"43214321-1234-1234-1234-43214321\"\n" +
                 "    \"app_role_id\" = \"12341234-1234-1234-1234-12341234\"\n" +
                 "},\n" +
                 "\"admin\" = {\n" +
                 "    \"principal_object_id\" = \"43214321-1234-1234-1234-43214321\"\n" +
                 "    \"app_role_id\" = \"12341234-1234-1234-1234-12341234\"\n" +
-                "}";
+                "}}";
 
         Assertions.assertEquals(multiLineAssertionVal,result);
     }
