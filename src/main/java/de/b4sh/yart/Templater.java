@@ -2,7 +2,6 @@ package de.b4sh.yart;
 
 import com.hubspot.jinjava.Jinjava;
 import com.hubspot.jinjava.lib.fn.ELFunctionDefinition;
-import de.b4sh.yart.extensions.array.ArrayContentStringify;
 import jakarta.json.stream.JsonParser;
 import org.leadpony.justify.api.*;
 import org.yaml.snakeyaml.Yaml;
@@ -155,8 +154,7 @@ public class Templater implements Callable<Integer> {
 
     private void templateDirectory(final LinkedHashMap data, final File folder) {
         Jinjava jinjava = new Jinjava();
-        //register functions to jinjava
-        this.registerJinjaFunctions(jinjava);
+        ExtensionLoader.loadExtensions(jinjava);
         try (Stream<Path> pathStream = Files.walk(folder.toPath(), Integer.MAX_VALUE)) {
             for (File file : pathStream.map(Path::toFile).filter(elem -> elem.toString().endsWith(".jinja2")).toList()) {
                 String content = Files.lines(file.toPath()).collect(Collectors.joining("\n"));
@@ -170,18 +168,9 @@ public class Templater implements Callable<Integer> {
                     log.log(Level.WARNING, String.format("Could not delete jinja2 template file with path: %s", path));
                 }
             }
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    private void registerJinjaFunctions(final Jinjava jinjava){
-        jinjava.getGlobalContext().registerFunction(
-                new ELFunctionDefinition("extarray",
-                        "stringifyArray",
-                        ArrayContentStringify.class,
-                        "stringifyArray",
-                        Object.class));
     }
 
     private Map<String, ?> generateJinJavaBindings(final LinkedHashMap data){

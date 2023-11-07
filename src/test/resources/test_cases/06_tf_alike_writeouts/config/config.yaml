@@ -1,0 +1,29 @@
+stages:
+  - name: development
+    aadAppGrafana:
+      name: "grafana_dummy_dev"
+      displayName: "Grafana Dummy Development"
+      appOwners:
+        - "Mr x"
+        - "Mr y"
+      logoutUrl: "hello.com/logout"
+      redirectUris:
+        - "hello-x.com"
+        - "hello-y.com"
+      roles:
+        veng_developer:
+          app_role_id: "12341234-1234-1234-1234-12341234"
+          principal_object_id: "43214321-1234-1234-1234-43214321"
+        admin:
+          app_role_id: "12341234-1234-1234-1234-12341234"
+          principal_object_id: "43214321-1234-1234-1234-43214321"
+    aadAppExternalSecrets:
+      name: "external_secrets_dummy_dev"
+      displayName: "External Secrets Dummy Development"
+      appOwners:
+        - "Mr x"
+        - "Mr y"
+      logoutUrl: "hello.com/logout"
+      redirectUris:
+        - "hello-x.com"
+        - "hello-y.com"

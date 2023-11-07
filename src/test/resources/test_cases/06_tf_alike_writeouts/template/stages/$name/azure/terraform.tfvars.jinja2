@@ -1,0 +1,21 @@
+grafana_aad_app = {
+  "{{ aadAppGrafana.name }}" = {
+    app_owners                   = {{ tf:arrayctnstring(aadAppGrafana.appOwners) }}
+    app_role_assignment_required = true
+    display_name                 = "{{ aadAppGrafana.displayName }}"
+    logout_url                   = "{{ aadAppGrafana.logoutUrl }}"
+    redirect_uris                = {{ tf:arrayctnstring(aadAppGrafana.redirectUris) }}
+    roles =  {{ tf:dictobjparser(aadAppGrafana.roles) }}
+  }
+}
+
+external_secrets_aad_app = {
+  {{ aadAppExternalSecrets.name }} = {
+    app_owners                   = {{ tf:arrayctnstring(aadAppExternalSecrets.appOwners) }}
+    app_role_assignment_required = false
+    display_name                 = "{{ aadAppExternalSecrets.displayName }}"
+    logout_url                   = "{{ aadAppExternalSecrets.logoutUrl }}"
+    redirect_uris                = {{ tf:arrayctnstring(aadAppExternalSecrets.redirectUris) }}
+    roles                        = {}
+  }
+}
