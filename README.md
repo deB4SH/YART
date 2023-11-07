@@ -30,6 +30,21 @@ There are also multiple examples included within the test resources. For example
 
 ---
 
+# Nice To Know Features
+
+YART supports dynamic templating. This means it is capable of copying a directory multiple times according to your configuration and templates the files within from this directory.
+This comes in handy if you are provisioning a service catalog for multiple clusters and need to copy the same values.yaml multiple times with only smaller changes to the configuration.
+
+An example for this feature is available within testcase [Complex Subschema](https://github.com/deB4SH/YART/tree/main/src/test/resources/test_cases/05_complex_subschema).
+The base [schema](https://github.com/deB4SH/YART/blob/main/src/test/resources/test_cases/05_complex_subschema/schema/schema.json) builds and array of clusters defined within the [cluster schema](https://github.com/deB4SH/YART/blob/main/src/test/resources/test_cases/05_complex_subschema/schema/clusterConfiguration/configuration.schema.json).
+It provides a [name](https://github.com/deB4SH/YART/blob/main/src/test/resources/test_cases/05_complex_subschema/schema/clusterConfiguration/configuration.schema.json#L7) which is reference within the templating phase.
+A similiar structure is build up within the template directory and a [special directory](https://github.com/deB4SH/YART/tree/main/src/test/resources/test_cases/05_complex_subschema/template/clusters) `name` is created starting with a `$` as marker.
+
+This specific directory get copied the amount of clusters you may have defined in your [config.yaml](https://github.com/deB4SH/YART/blob/main/src/test/resources/test_cases/05_complex_subschema/config/config.yaml).
+The resulting should look like the [expected output](https://github.com/deB4SH/YART/tree/main/src/test/resources/test_cases/05_complex_subschema/expected/clusters) found inside the test ressources.
+
+---
+
 # Extendability
 
 From time to time it is required to extend jinja a bit and therefore YART provides a `ExtensionProvider` to help you with embedding your own functionality.
@@ -56,6 +71,17 @@ If you desire to build your own extension - Nothin is simpler then that.
 
 The `ExtensionLoader` check before rendering which subclasses of the `ExtensionProvider` are available and loads them accordingly. 
 You can follow the HelloWorld implementation [code wise](https://github.com/deB4SH/YART/blob/main/src/main/java/de/b4sh/yart/extensions/example/HelloWorld.java) and [test case wise](https://github.com/deB4SH/YART/tree/main/src/test/resources/test_cases/00_hello_world).
+
+---
+
+# Limitations
+
+There are always some limitations, eh?
+This are the currently known limitations:
+
+- dynamic folder templating is only available for one level depth
+  - nested dynamic directories are currently not support but may be implemented in the future
+
 
 ---
 
