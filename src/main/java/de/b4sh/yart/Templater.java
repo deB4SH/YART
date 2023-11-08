@@ -34,19 +34,19 @@ import java.util.stream.Stream;
         description = "Creates templates based on given schema and templater directory")
 public class Templater implements Callable<Integer> {
 
-    @CommandLine.Option(names = {"-td","--templatedirectory"}, description = "Path to template directory")
+    @CommandLine.Option(names = {"-td","--templatedirectory"}, description = "Path to template directory", defaultValue = "/template")
     private String templateDirectory;
 
-    @CommandLine.Option(names = {"-od","--outputdirectory"}, description = "Path to output data towards")
+    @CommandLine.Option(names = {"-od","--outputdirectory"}, description = "Path to output data towards", defaultValue = "/output")
     private String outputDirectory;
 
-    @CommandLine.Option(names = {"-s","--schemafilename"}, description = "Name of the schema file")
+    @CommandLine.Option(names = {"-s","--schemafilename"}, description = "Name of the schema file", defaultValue = "schema.json")
     private String schemaFilename;
 
-    @CommandLine.Option(names = {"-sd","--schemadirectory"}, description = "Path to schema files")
+    @CommandLine.Option(names = {"-sd","--schemadirectory"}, description = "Path to schema files", defaultValue = "/schema")
     private String schemaDirectory;
 
-    @CommandLine.Option(names = {"-c","--configfile"}, description = "Path to configuration file")
+    @CommandLine.Option(names = {"-c","--configfile"}, description = "Path to configuration file", defaultValue = "/data/config.yaml")
     private String configFileArg;
 
     private final Logger log = Logger.getLogger(Templater.class.getName());
