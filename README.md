@@ -24,10 +24,31 @@ There are also multiple examples included within the test resources. For example
 [Case: Simple Happy Path](https://github.com/deB4SH/YART/tree/main/src/test/resources/test_cases/02_simple_happy_path/template),
 [Case: Subschema](https://github.com/deB4SH/YART/tree/main/src/test/resources/test_cases/04_subschema/template),
 [Case: Complex Subschema](https://github.com/deB4SH/YART/tree/main/src/test/resources/test_cases/05_complex_subschema/template).
-4) Create your config.yaml according to your schema. A valid config mal look like the one from [Case: Complex Subschema](https://github.com/deB4SH/YART/blob/main/src/test/resources/test_cases/05_complex_subschema/config/config.yaml)
+4) Create your config.yaml according to your schema. A valid config may look like the one from [Case: Complex Subschema](https://github.com/deB4SH/YART/blob/main/src/test/resources/test_cases/05_complex_subschema/config/config.yaml)
 5) Run the application with the required environment configuration
 `java -jar /YOUR_DOWNLOAD_LOCATION/yart.jar --templatedirectory ${templatedirectory} --schemadirectory ${schemadirectory} --schemafilename ${schemafilename} --configfile ${configfile} --outputdirectory /YOUR_DESIRED_OUTPUT_LOCATION`
 
+---
+
+# Command Line Arguments
+YART provides serveral command line arguments to control the application.
+
+- `templatedirectory`
+  - Path towards the directory of the templates
+  - Defaults to: `/template`
+- `schemadirectory`
+  - Path towards the directory where the schemas reside
+  - Defaults to: '/schema'
+- `schemafilename`
+  - Schema filename to start from
+  - Defaults to: "schema.json"
+- `configfile`
+  - Config file location including filename and extension to use
+  - Defaults to: '/data/config.yaml'
+- `outputdirectory`
+  - Desired output directory to write templated manifests towards
+  - Defaults to: '/output'
+ 
 ---
 
 # Nice To Know Features
@@ -104,7 +125,7 @@ This are the currently known limitations:
 
 ---
 
-# Something Something
+# Something more...
 
 All this is possible to the awesome work of open source communities in various projects. For this some honorable mentions of used frameworks:
 
