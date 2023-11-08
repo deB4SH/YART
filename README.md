@@ -17,16 +17,16 @@ YART provides serveral command line arguments to control the application.
   - Defaults to: `/template`
 - `schemadirectory`
   - Path towards the directory where the schemas reside
-  - Defaults to: '/schema'
+  - Defaults to: `/schema`
 - `schemafilename`
   - Schema filename to start from
-  - Defaults to: "schema.json"
+  - Defaults to: `schema.json`
 - `configfile`
   - Config file location including filename and extension to use
-  - Defaults to: '/data/config.yaml'
+  - Defaults to: `/data/config.yaml`
 - `outputdirectory`
   - Desired output directory to write templated manifests towards
-  - Defaults to: '/output'
+  - Defaults to: `/output`
 
 ---
 
