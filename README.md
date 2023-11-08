@@ -168,6 +168,6 @@ All this is possible to the awesome work of open source communities in various p
 - [justify](https://github.com/leadpony/justify)
 - [reflections](https://github.com/ronmamo/reflections)
 
-Is something missing your desperately need? Something else?
+Is something missing you desperately need? Something else?
 
 Feel free to get in touch via mastodon: https://hachyderm.io/@deb4sh
