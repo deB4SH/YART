@@ -1,4 +1,7 @@
-# YART
+<p align="center" width="100%">
+    <img width="50%" src="https://github.com/deB4SH/YART/blob/main/misc/logo.png?raw=true">
+</p>
+
 YART, short term for Yet Another Random Templater, is a schema based templater written in Java designated for a wide range of possibilities.
 It validates the given configuration yaml against the provided json schema and fills in all known values into the provided template.
 The templating is done with [jinjava](https://github.com/HubSpot/jinjava), a jinja template engine for java. 
