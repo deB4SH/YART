@@ -13,7 +13,11 @@ RUN groupadd -g ${gid} ${group}
 RUN useradd -u ${uid} -g ${group} -s /bin/sh -m ${user}
 #create default directories
 WORKDIR /
-RUN mkdir {template,schema,data,output}
+RUN mkdir template schema data output
+RUN chown appuser:appuser template \
+    chown appuser:appuser schema \
+    chown appuser:appuser data \
+    chown appuser:appuser output
 #copy jar
 COPY yart.jar /tmp/yart.jar
 #default run configuration
