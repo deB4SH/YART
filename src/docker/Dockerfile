@@ -15,9 +15,9 @@ RUN useradd -u ${uid} -g ${group} -s /bin/sh -m ${user}
 WORKDIR /
 RUN mkdir template schema data output
 RUN chown appuser:appuser template \
-    chown appuser:appuser schema \
-    chown appuser:appuser data \
-    chown appuser:appuser output
+    && chown appuser:appuser schema \
+    && chown appuser:appuser data \
+    && chown appuser:appuser output
 #copy jar
 COPY yart.jar /tmp/yart.jar
 #default run configuration
