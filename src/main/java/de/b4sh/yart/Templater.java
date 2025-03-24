@@ -57,6 +57,8 @@ public class Templater implements Callable<Integer> {
     private final Logger log = Logger.getLogger(Templater.class.getName());
     private final Pattern pathPattern = Pattern.compile(".+(?>\\$[a-z]+)$");
 
+    JsonSchemaReaderFactory readerFactory;
+
     @Override
     public Integer call() throws Exception {
         final File schemaFile = new File(schemaDirectory +  File.separator + schemaFilename);
@@ -74,8 +76,8 @@ public class Templater implements Callable<Integer> {
         //check for failures against schema and add defaults to data structure
         final JsonValidationService service = JsonValidationService.newInstance();
 
-        final SchemaHelper schemaHelper = new SchemaHelper(schemaFile.toPath());
-        JsonSchema schema = schemaHelper.loadSchema();
+        this.readerFactory = service.createSchemaReaderFactoryBuilder().withSchemaResolver(this::resolveSchema).build();
+        JsonSchema schema = this.readSchema(schemaFile.toPath());
 
         List<String> problemsFound = new ArrayList<>();
         ProblemHandler problemHandler = service.createProblemPrinter(problemsFound::add);
@@ -191,6 +193,18 @@ public class Templater implements Callable<Integer> {
         } catch (final IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private JsonSchema readSchema(Path path){
+        try(JsonSchemaReader reader = this.readerFactory.createSchemaReader(path)){
+            return reader.read();
+        }
+    }
+
+    private JsonSchema resolveSchema(URI id){
+        Path path = Paths.get(schemaDirectory,id.getPath());
+        log.log(Level.INFO, String.format("Resolving schema with path: %s",id.getPath()));
+        return readSchema(path);
     }
 
     void setOutputDirectory(String outputDirectory) {
