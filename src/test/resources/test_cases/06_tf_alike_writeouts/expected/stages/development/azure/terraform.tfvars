@@ -6,12 +6,12 @@ grafana_aad_app = {
     logout_url                   = "hello.com/logout"
     redirect_uris                = ["hello-x.com","hello-y.com"]
     roles =  {"veng_developer" = {
-    "principal_object_id" = "43214321-1234-1234-1234-43214321"
     "app_role_id" = "12341234-1234-1234-1234-12341234"
+    "principal_object_id" = "43214321-1234-1234-1234-43214321"
 },
 "admin" = {
-    "principal_object_id" = "43214321-1234-1234-1234-43214321"
     "app_role_id" = "12341234-1234-1234-1234-12341234"
+    "principal_object_id" = "43214321-1234-1234-1234-43214321"
 }}
   }
 }
