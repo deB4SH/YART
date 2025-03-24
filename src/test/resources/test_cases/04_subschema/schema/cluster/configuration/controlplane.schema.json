@@ -1,5 +1,5 @@
 {
-  "$id": "https://b4sh.de/cluster/controlplane.schema.json",
+  "$id": "https://schema.b4sh.de/cluster/configuration/controlplane.schema.json",
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "Cluster Control Plane Schema",
   "type": "object",
