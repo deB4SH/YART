@@ -1,8 +1,13 @@
 package de.b4sh.yart;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.hubspot.jinjava.Jinjava;
 import com.hubspot.jinjava.lib.fn.ELFunctionDefinition;
+import jakarta.json.*;
 import jakarta.json.stream.JsonParser;
+import jakarta.json.stream.JsonParserFactory;
 import org.leadpony.justify.api.*;
 import org.yaml.snakeyaml.Yaml;
 import picocli.CommandLine;
@@ -52,9 +57,6 @@ public class Templater implements Callable<Integer> {
     private final Logger log = Logger.getLogger(Templater.class.getName());
     private final Pattern pathPattern = Pattern.compile(".+(?>\\$[a-z]+)$");
 
-    private JsonValidationService service;
-    private JsonSchemaReaderFactory readerFactory;
-
     @Override
     public Integer call() throws Exception {
         final File schemaFile = new File(schemaDirectory +  File.separator + schemaFilename);
@@ -69,17 +71,28 @@ public class Templater implements Callable<Integer> {
             log.log(Level.FINE, String.format("Path checked for config file: %s",configFile.getPath()));
             return ExitCode.CONFIG_FILE_NOT_FOUND.getNumber();
         }
-        //validate configuration file again schema
-        this.service = JsonValidationService.newInstance();
-        this.readerFactory = this.service.createSchemaReaderFactoryBuilder().withSchemaResolver(this::resolveSchema).build();
-        JsonSchema schema = this.readSchema(schemaFile.toPath());
+        //check for failures against schema and add defaults to data structure
+        final JsonValidationService service = JsonValidationService.newInstance();
 
-        List<String> problemList = validateConfigurationParser(service,schema,configFile.toPath());
-        if(!problemList.isEmpty()){
-            log.log(Level.WARNING, ExitCode.CONFIG_CONTAINS_ERRORS.getReason());
-            problemList.forEach(elem -> log.log(Level.INFO, String.format("Validation Error: %s",elem)));
-            return ExitCode.CONFIG_CONTAINS_ERRORS.getNumber();
+        final SchemaHelper schemaHelper = new SchemaHelper(schemaFile.toPath());
+        JsonSchema schema = schemaHelper.loadSchema();
+
+        List<String> problemsFound = new ArrayList<>();
+        ProblemHandler problemHandler = service.createProblemPrinter(problemsFound::add);
+        ValidationConfig validationConfig = service.createValidationConfig().withSchema(schema).withProblemHandler(problemHandler).withDefaultValues(true);
+
+        JsonReaderFactory readerFactory = service.createReaderFactory(validationConfig.getAsMap());
+        JsonReader reader = readerFactory.createReader(Files.newInputStream(configFile.toPath()));
+        //data structure as json value from config file
+        JsonValue value = reader.readValue();
+        //check for problems and jump out of templater if errors occured
+        if(!problemsFound.isEmpty()){
+            problemsFound.forEach(elem -> log.info(String.format("Found error while parsing config: %s",elem)));
+            return -1; //TODO: find a nice exit code for this here
         }
+        //create mapping for jinjava
+        final ObjectMapper mapper = new ObjectMapper();
+        final Map<String,Object> dataBinding = mapper.readValue(value.toString(), HashMap.class);
         //create output dir if not existing
         File outputDir = new File(outputDirectory);
         if(!outputDir.exists()){
@@ -88,9 +101,6 @@ public class Templater implements Callable<Integer> {
                 return ExitCode.OUTPUT_DIR_NOT_CREATABLE.getNumber();
             }
         }
-        //load configuration yaml
-        Yaml yaml = new Yaml();
-        Map<String,Object> data = yaml.load(new FileInputStream(configFile));
         //check if template dir exists
         File templateDir = new File(templateDirectory);
         if(!templateDir.exists() || !templateDir.isDirectory()){
@@ -115,13 +125,23 @@ public class Templater implements Callable<Integer> {
                 final String configurationPathWithoutKey = element.toString().replaceAll("\\$.+","");
             };
             //traverse down the path in config
-            Object dataResult = null;
+            Object dataResult = dataBinding;
             for(String s: configurationPath){
+                if(s.isEmpty()){
+                    log.log(Level.FINE, "Seems to be top level element. Which is empty all the time");
+                    continue;
+                }
                 if(s.contains("$")){
                     ref.templateKey = s.replace("$","");
                     break;
                 }
-                dataResult = data.get(s);
+                if(dataResult instanceof Map<?,?>){
+                    dataResult = ((Map<String,Object>)dataResult).get(s);
+                }else{
+                    log.log(Level.WARNING, "Seems like there is an issue with your dynamic templating? Templater can't select data like folder suggest");
+                    break;
+                }
+
             }
             if(!(dataResult instanceof ArrayList<?>)){
                 log.log(Level.WARNING, ExitCode.DYNAMIC_TEMPLATE_DOES_NOT_COMPLY_CONFIG.getReason());
@@ -147,21 +167,21 @@ public class Templater implements Callable<Integer> {
             //cleanup and remove marker dir
             FileHelper.deleteFolderWithContent(element);
         });
+        //TODO: render still open templates
         //done with dynamic dirs, template all other .jinja2 files
-        templateDirectory((LinkedHashMap) data,outputDir);
+        templateDirectory(dataBinding, outputDir);
         return 0;
     }
 
-    private void templateDirectory(final LinkedHashMap data, final File folder) {
+    private void templateDirectory(final Map<String,?> data, final File folder) {
         Jinjava jinjava = new Jinjava();
         ExtensionLoader.loadExtensions(jinjava);
         try (Stream<Path> pathStream = Files.walk(folder.toPath(), Integer.MAX_VALUE)) {
             for (File file : pathStream.map(Path::toFile).filter(elem -> elem.toString().endsWith(".jinja2")).toList()) {
-                String content = Files.lines(file.toPath()).collect(Collectors.joining("\n"));
-                Map<String, ?> jinJavaBindings = generateJinJavaBindings(data);
-                String result = jinjava.render(content, jinJavaBindings);
+                final String content = Files.lines(file.toPath()).collect(Collectors.joining("\n"));
+                final String result = jinjava.render(content, data);
                 //remove jinja2 extension from filepath
-                String path = file.getPath().replace(".jinja2", "");
+                final String path = file.getPath().replace(".jinja2", "");
                 Files.write(Path.of(path), result.getBytes(StandardCharsets.UTF_8));
                 //delete old jinja2 template file
                 if (!file.delete()) {
@@ -171,45 +191,6 @@ public class Templater implements Callable<Integer> {
         } catch (final IOException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    private Map<String, ?> generateJinJavaBindings(final LinkedHashMap data){
-        Map<String, Object> result = new HashMap<>();
-        data.forEach((key, value) -> {
-            if(value instanceof LinkedHashMap<?,?>){
-                //recursive call for generateJinJavaBindings
-                result.put((String)key, generateJinJavaBindings((LinkedHashMap) value));
-            } else if(value instanceof ArrayList<?>){
-                result.put((String)key, value); //arraylist directly
-            }
-            else {
-                result.put((String)key, value.toString());
-            }
-        });
-        return result;
-    }
-
-    private JsonSchema readSchema(Path path){
-        try(JsonSchemaReader reader = this.readerFactory.createSchemaReader(path)){
-            return reader.read();
-        }
-    }
-
-    private JsonSchema resolveSchema(URI id){
-        Path path = Paths.get(schemaDirectory,id.getPath());
-        log.log(Level.INFO, String.format("Resolving schema with path: %s",id.getPath()));
-        return readSchema(path);
-    }
-
-    private List<String> validateConfigurationParser(JsonValidationService service, JsonSchema schema, Path config){
-        List<String> problemList = new ArrayList<>();
-        ProblemHandler problemHandler = service.createProblemPrinter(problemList::add);
-        try(JsonParser parser = service.createParser(config,schema,problemHandler)){
-            while (parser.hasNext()) { //parse through all elements
-                JsonParser.Event event = parser.next();
-            }
-        }
-        return problemList;
     }
 
     void setOutputDirectory(String outputDirectory) {
