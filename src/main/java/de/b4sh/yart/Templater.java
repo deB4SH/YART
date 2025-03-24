@@ -90,7 +90,7 @@ public class Templater implements Callable<Integer> {
         //check for problems and jump out of templater if errors occured
         if(!problemsFound.isEmpty()){
             problemsFound.forEach(elem -> log.info(String.format("Found error while parsing config: %s",elem)));
-            return -1; //TODO: find a nice exit code for this here
+            return ExitCode.CONFIG_CONTAINS_ERRORS.getNumber();
         }
         //create mapping for jinjava
         final ObjectMapper mapper = new ObjectMapper();
@@ -169,7 +169,6 @@ public class Templater implements Callable<Integer> {
             //cleanup and remove marker dir
             FileHelper.deleteFolderWithContent(element);
         });
-        //TODO: render still open templates
         //done with dynamic dirs, template all other .jinja2 files
         templateDirectory(dataBinding, outputDir);
         return 0;
