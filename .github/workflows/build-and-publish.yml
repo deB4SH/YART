@@ -30,6 +30,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Copy result jar to docker dir
         run: cp target/yart-${{ github.ref_name }}-jar-with-dependencies.jar src/docker/yart.jar
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v1
       - name: Login to GHCR
         if: github.event_name != 'pull_request'
         uses: docker/login-action@v2
@@ -58,6 +61,7 @@ jobs:
         with:
           context: ./src/docker/
           file: ./src/docker/Dockerfile
+          platforms: linux/amd64,linux/arm64/v8
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta_build.outputs.tags }}
           labels: ${{ steps.meta_build.outputs.labels }}
