@@ -1,0 +1,10 @@
+person:
+  - name: Günther
+    age: 60
+    label: {
+      "foo": "bar",
+      "baz": "100"
+    }
+  - name: Detlef
+    age: 81
+  - name: Harry
