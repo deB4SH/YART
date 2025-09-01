@@ -1,5 +1,5 @@
 <p align="center" width="100%">
-    <img width="50%" src="https://github.com/deB4SH/YART/blob/main/misc/logo.png?raw=true">
+    <img width="50%" src="https://github.com/deB4SH/YART/blob/main/misc/logo_new.png?raw=true">
 </p>
 
 YART, short term for Yet Another Random Templater, is a schema based templater written in Java designated for a wide range of possibilities.
