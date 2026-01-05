@@ -94,7 +94,7 @@
     <dependency>
       <groupId>info.picocli</groupId>
       <artifactId>picocli</artifactId>
-      <version>4.7.6</version> <!-- https://mvnrepository.com/artifact/info.picocli/picocli -->
+      <version>4.7.7</version> <!-- https://mvnrepository.com/artifact/info.picocli/picocli -->
     </dependency>
     <dependency>
       <groupId>com.hubspot.jinjava</groupId>
@@ -105,7 +105,7 @@
     <dependency>
       <groupId>org.yaml</groupId>
       <artifactId>snakeyaml</artifactId>
-      <version>2.4</version> <!-- https://mvnrepository.com/artifact/org.yaml/snakeyaml -->
+      <version>2.5</version> <!-- https://mvnrepository.com/artifact/org.yaml/snakeyaml -->
     </dependency>
     <!-- validator -->
     <dependency>
