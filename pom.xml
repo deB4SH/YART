@@ -91,21 +91,24 @@
   </build>
 
   <dependencies>
+    <!-- https://mvnrepository.com/artifact/info.picocli/picocli -->
     <dependency>
       <groupId>info.picocli</groupId>
       <artifactId>picocli</artifactId>
-      <version>4.7.7</version> <!-- https://mvnrepository.com/artifact/info.picocli/picocli -->
+      <version>4.7.7</version>
     </dependency>
+    <!-- https://mvnrepository.com/artifact/com.hubspot.jinjava/jinjava -->
     <dependency>
       <groupId>com.hubspot.jinjava</groupId>
       <artifactId>jinjava</artifactId>
-      <version>2.8.2</version> <!-- https://mvnrepository.com/artifact/com.hubspot.jinjava/jinjava -->
+      <version>2.8.3</version>
     </dependency>
     <!-- read yaml into memory -->
+    <!-- https://mvnrepository.com/artifact/org.yaml/snakeyaml -->
     <dependency>
       <groupId>org.yaml</groupId>
       <artifactId>snakeyaml</artifactId>
-      <version>2.5</version> <!-- https://mvnrepository.com/artifact/org.yaml/snakeyaml -->
+      <version>2.5</version>
     </dependency>
     <!-- validator -->
     <dependency>
@@ -119,10 +122,11 @@
       <version>2.1.0</version>
       <scope>runtime</scope>
     </dependency>
+    <!-- https://mvnrepository.com/artifact/org.reflections/reflections/0.10.2 -->
     <dependency>
       <groupId>org.reflections</groupId>
       <artifactId>reflections</artifactId>
-      <version>0.10.2</version> <!-- https://mvnrepository.com/artifact/org.reflections/reflections/0.10.2 -->
+      <version>0.10.2</version>
     </dependency>
     <!-- test dep -->
     <dependency>
